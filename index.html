@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>数字展厅</title>
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    /* 流动渐变背景 */
+    body{
+      width:100%;
+      height:100vh;
+      overflow:hidden;
+
+      background: linear-gradient(
+        135deg,
+        #0f0f0f 0%,
+        #1a1a1a 25%,
+        #0d0d0d 50%,
+        #1a1a1a 75%,
+        #0f0f0f 100%
+      );
+      background-size: 400% 400%;
+      animation: flowGradient 20s ease infinite;
+
+      display:flex;
+      justify-content:center;
+      align-items:center;
+
+      font-family:
+      "Microsoft YaHei",
+      sans-serif;
+
+      color:white;
+
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 流动渐变动画 */
+    @keyframes flowGradient {
+      0% {
+        background-position: 0% 50%;
+        filter: drop-shadow(0 0 80px rgba(212, 175, 55, 0.08));
+      }
+      25% {
+        background-position: 100% 50%;
+        filter: drop-shadow(0 0 60px rgba(212, 175, 55, 0.06));
+      }
+      50% {
+        background-position: 100% 100%;
+        filter: drop-shadow(0 0 100px rgba(212, 175, 55, 0.1));
+      }
+      75% {
+        background-position: 0% 100%;
+        filter: drop-shadow(0 0 60px rgba(212, 175, 55, 0.06));
+      }
+      100% {
+        background-position: 0% 50%;
+        filter: drop-shadow(0 0 80px rgba(212, 175, 55, 0.08));
+      }
+    }
+
+    /* 背景光影装饰 */
+    body::before {
+      content: '';
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+      top: -200px;
+      left: -100px;
+      animation: floatLight 15s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    body::after {
+      content: '';
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.12) 0%, transparent 70%);
+      bottom: -150px;
+      right: -100px;
+      animation: floatLight 18s ease-in-out infinite reverse;
+      pointer-events: none;
+    }
+
+    @keyframes floatLight {
+      0%, 100% {
+        transform: translate(0, 0);
+        opacity: 0.3;
+      }
+      50% {
+        transform: translate(30px, 40px);
+        opacity: 0.5;
+      }
+    }
+
+    /* 主容器 - 镜头推进效果 */
+    .container {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      animation: cameraZoom 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    }
+
+    /* 镜头推进动画 */
+    @keyframes cameraZoom {
+      0% {
+        transform: scale(0.8) translateZ(0);
+        opacity: 0;
+        filter: blur(10px);
+      }
+      50% {
+        filter: blur(5px);
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+        filter: blur(0);
+      }
+    }
+
+    /* 标题呼吸发光效果 */
+    h1{
+      font-size:80px;
+      font-weight:100;
+      letter-spacing:20px;
+      margin-bottom: 20px;
+
+      opacity:0;
+
+      animation: show 2.5s ease forwards 0.3s, breathingGlow 4s ease-in-out infinite 2.3s;
+
+      text-shadow: 
+        0 0 10px rgba(212, 175, 55, 0.5),
+        0 0 20px rgba(212, 175, 55, 0.3);
+
+      color: #f9f9f9;
+      transition: all 0.8s ease;
+    }
+
+    h1:hover {
+      letter-spacing: 24px;
+      text-shadow: 
+        0 0 20px rgba(212, 175, 55, 0.8),
+        0 0 40px rgba(212, 175, 55, 0.5),
+        0 0 60px rgba(212, 175, 55, 0.3);
+    }
+
+    /* 副标题 */
+    .subtitle {
+      font-size: 18px;
+      font-weight: 300;
+      letter-spacing: 6px;
+      color: rgba(212, 175, 55, 0.8);
+      margin-bottom: 40px;
+      opacity: 0;
+      animation: show 2.8s ease forwards 0.6s;
+      text-transform: uppercase;
+    }
+
+    /* 描述文本 */
+    .description {
+      font-size: 14px;
+      font-weight: 300;
+      letter-spacing: 3px;
+      color: rgba(245, 245, 245, 0.6);
+      max-width: 600px;
+      line-height: 2;
+      opacity: 0;
+      animation: show 3s ease forwards 0.9s;
+      margin-top: 30px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+    }
+
+    .description::before {
+      content: '';
+      display: block;
+      width: 80px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #d4af37, transparent);
+      margin: 0 auto 20px;
+    }
+
+    /* 呼吸发光动画 */
+    @keyframes breathingGlow {
+      0%, 100% {
+        opacity: 0.8;
+        text-shadow: 
+          0 0 10px rgba(212, 175, 55, 0.4),
+          0 0 20px rgba(212, 175, 55, 0.2);
+      }
+      50% {
+        opacity: 1;
+        text-shadow: 
+          0 0 20px rgba(212, 175, 55, 0.7),
+          0 0 40px rgba(212, 175, 55, 0.4),
+          0 0 60px rgba(212, 175, 55, 0.2);
+      }
+    }
+
+    /* 入场动画 */
+    @keyframes show{
+      from{
+        opacity:0;
+        transform:
+        translateY(40px);
+      }
+
+      to{
+        opacity:0.8;
+        transform:
+        translateY(0);
+      }
+    }
+
+    /* 装饰性几何线条 */
+    .decor-line {
+      position: absolute;
+      background: linear-gradient(90deg, transparent, #d4af37, transparent);
+      opacity: 0.3;
+      animation: slideLine 8s ease-in-out infinite;
+    }
+
+    .line-top {
+      width: 200px;
+      height: 1px;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      animation-delay: 0s;
+    }
+
+    .line-bottom {
+      width: 200px;
+      height: 1px;
+      bottom: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      animation-delay: 2s;
+    }
+
+    @keyframes slideLine {
+      0%, 100% {
+        opacity: 0.2;
+        width: 150px;
+      }
+      50% {
+        opacity: 0.4;
+        width: 250px;
+      }
+    }
+
+    /* 粒子容器 */
+    .particles-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    /* 漂浮粒子 */
+    .particle {
+      position: absolute;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.8), transparent);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: float linear infinite;
+    }
+
+    /* 粒子漂浮动画 */
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) translateX(0) scale(1);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.6;
+      }
+      90% {
+        opacity: 0.6;
+      }
+      100% {
+        transform: translateY(-100vh) translateX(var(--drift, 0)) scale(0.5);
+        opacity: 0;
+      }
+    }
+
+    /* 不同大小的粒子 */
+    .particle.size-1 {
+      width: 2px;
+      height: 2px;
+    }
+
+    .particle.size-2 {
+      width: 4px;
+      height: 4px;
+    }
+
+    .particle.size-3 {
+      width: 6px;
+      height: 6px;
+    }
+
+    .particle.size-4 {
+      width: 8px;
+      height: 8px;
+    }
+
+    /* 鼠标光影跟随 - 心形 */
+    .mouse-light {
+      position: fixed;
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle at 30% 30%, rgba(255, 182, 193, 0.6) 0%, rgba(255, 192, 203, 0.4) 30%, rgba(255, 200, 210, 0.2) 60%, transparent 100%);
+      border-radius: 50%;
+      pointer-events: none;
+      filter: blur(50px);
+      z-index: 5;
+      transition: opacity 0.3s ease;
+      /* 超圆润的心形裁剪 */
+      clip-path: polygon(
+        50% 90%,
+        15% 50%, 15% 30%, 30% 15%, 45% 15%, 50% 35%,
+        50% 35%, 55% 15%, 70% 15%, 85% 30%, 85% 50%
+      );
+    }
+
+    .mouse-light.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* 底部品牌标志 */
+    .brand-mark {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      letter-spacing: 4px;
+      color: rgba(212, 175, 55, 0.5);
+      opacity: 0;
+      animation: fadeInDelay 4s ease forwards 2s;
+    }
+
+    @keyframes fadeInDelay {
+      to {
+        opacity: 1;
+      }
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <div class="mouse-light hidden" id="mouseLight"></div>
+
+  <div class="particles-container" id="particlesContainer"></div>
+
+  <div class="decor-line line-top"></div>
+  
+  <div class="container">
+    <h1>端木翠花的未来展览</h1>
+    <p class="subtitle">Art Exhibition</p>
+    <p class="description">
+      探索数字艺术的无限可能<br>
+      感受光影流动的诗意美感
+    </p>
+  </div>
+  
+  <div class="decor-line line-bottom"></div>
+
+  <div class="brand-mark">DIGITAL GALLERY 2026</div>
+
+  <script>
+    // 鼠标光影跟随系统
+    const mouseLight = document.getElementById('mouseLight');
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let isMoving = false;
+    let moveTimeout;
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+
+      // 更新光影位置（居中在鼠标）
+      mouseLight.style.left = (mouseX - 150) + 'px';
+      mouseLight.style.top = (mouseY - 150) + 'px';
+
+      // 显示光影
+      mouseLight.classList.remove('hidden');
+
+      // 清除之前的超时
+      clearTimeout(moveTimeout);
+
+      // 3秒无移动后隐藏
+      moveTimeout = setTimeout(() => {
+        mouseLight.classList.add('hidden');
+      }, 3000);
+    });
+
+    // 鼠标离开窗口时隐藏
+    document.addEventListener('mouseleave', () => {
+      mouseLight.classList.add('hidden');
+    });
+
+    // 鼠标进入窗口时显示
+    document.addEventListener('mouseenter', () => {
+      mouseLight.classList.remove('hidden');
+    });
+
+    // 粒子生成系统
+    const particlesContainer = document.getElementById('particlesContainer');
+    const particleCount = 50;
+    const sizes = ['size-1', 'size-2', 'size-3', 'size-4'];
+
+    function createParticle() {
+      const particle = document.createElement('div');
+      particle.className = `particle ${sizes[Math.floor(Math.random() * sizes.length)]}`;
+      
+      // 随机位置
+      const startX = Math.random() * window.innerWidth;
+      const startY = window.innerHeight;
+      
+      // 随机持续时间（15-30秒）缓慢漂浮
+      const duration = 15 + Math.random() * 15;
+      
+      // 随机水平漂移
+      const drift = (Math.random() - 0.5) * 200;
+      
+      particle.style.left = startX + 'px';
+      particle.style.top = startY + 'px';
+      particle.style.animationDuration = duration + 's';
+      particle.style.animationDelay = Math.random() * 5 + 's';
+      particle.style.setProperty('--drift', drift + 'px');
+      
+      particlesContainer.appendChild(particle);
+      
+      // 动画完成后移除
+      setTimeout(() => {
+        particle.remove();
+      }, (duration + 5) * 1000);
+    }
+
+    // 初始化粒子
+    for (let i = 0; i < particleCount; i++) {
+      setTimeout(() => {
+        createParticle();
+      }, Math.random() * 3000);
+    }
+
+    // 持续生成粒子
+    setInterval(() => {
+      createParticle();
+    }, 800);
+  </script>
+
+</body>
+
+</html>
