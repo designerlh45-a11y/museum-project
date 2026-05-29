@@ -44,6 +44,7 @@
 
       position: relative;
       overflow: hidden;
+      cursor: none;
     }
 
     /* 流动渐变动画 */
@@ -323,28 +324,25 @@
       height: 8px;
     }
 
-    /* 鼠标光影跟随 - 心形 */
-    .mouse-light {
+    /* SVG 玻璃质感心形光标 */
+    .heart-container {
       position: fixed;
-      width: 120px;
-      height: 120px;
-      background: radial-gradient(circle at 30% 30%, rgba(255, 182, 193, 0.6) 0%, rgba(255, 192, 203, 0.4) 30%, rgba(255, 200, 210, 0.2) 60%, transparent 100%);
-      border-radius: 50%;
+      width: 80px;
+      height: 80px;
       pointer-events: none;
-      filter: blur(50px);
-      z-index: 5;
-      transition: opacity 0.3s ease;
-      /* 光滑弧线的心形裁剪 */
-      clip-path: polygon(
-        50% 100%,
-        20% 70%, 10% 55%, 8% 40%, 12% 25%, 25% 12%, 35% 5%, 50% 15%,
-        50% 15%, 65% 5%, 75% 12%, 88% 25%, 92% 40%, 90% 55%, 80% 70%
-      );
+      z-index: 9999;
+      opacity: 0;
+      transition: opacity 0.2s ease;
     }
 
-    .mouse-light.hidden {
-      opacity: 0;
-      pointer-events: none;
+    .heart-container svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 0 15px rgba(255, 150, 200, 0.4)) drop-shadow(0 0 30px rgba(200, 100, 150, 0.2));
+    }
+
+    .heart-container.show {
+      opacity: 1;
     }
 
     /* 底部品牌标志 */
@@ -372,7 +370,28 @@
 
 <body>
 
-  <div class="mouse-light hidden" id="mouseLight"></div>
+  <div class="heart-container" id="heartContainer">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:rgba(255, 150, 200, 0.3);stop-opacity:1" />
+          <stop offset="50%" style="stop-color:rgba(200, 120, 180, 0.2);stop-opacity:1" />
+          <stop offset="100%" style="stop-color:rgba(160, 80, 140, 0.15);stop-opacity:1" />
+        </linearGradient>
+        <filter id="glassGlow">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="0.5" />
+          <feComponentTransfer>
+            <feFuncA type="linear" slope="0.7"/>
+          </feComponentTransfer>
+        </filter>
+      </defs>
+      <!-- 心形主体 -->
+      <path d="M50 85 C25 70, 10 55, 10 40 C10 25, 22 15, 32 15 C40 15, 48 22, 50 30 C52 22, 60 15, 68 15 C78 15, 90 25, 90 40 C90 55, 75 70, 50 85 Z" 
+            fill="url(#heartGradient)" opacity="0.7" filter="url(#glassGlow)" />
+      <!-- 内层高光 -->
+      <ellipse cx="35" cy="32" rx="7" ry="9" fill="rgba(255, 200, 220, 0.2)" opacity="0.5" />
+    </svg>
+  </div>
 
   <div class="particles-container" id="particlesContainer"></div>
 
@@ -392,41 +411,40 @@
   <div class="brand-mark">DIGITAL GALLERY 2026</div>
 
   <script>
-    // 鼠标光影跟随系统
-    const mouseLight = document.getElementById('mouseLight');
-    let mouseX = window.innerWidth / 2;
-    let mouseY = window.innerHeight / 2;
-    let isMoving = false;
-    let moveTimeout;
+    // 玻璃质感心形光标系统
+    const heartContainer = document.getElementById('heartContainer');
+    let mouseX = 0;
+    let mouseY = 0;
+    let hideTimeout;
 
     document.addEventListener('mousemove', (e) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
 
-      // 更新光影位置（居中在鼠标）
-      mouseLight.style.left = (mouseX - 150) + 'px';
-      mouseLight.style.top = (mouseY - 150) + 'px';
+      // 更新心形位置（心形中心在鼠标位置）
+      heartContainer.style.left = (mouseX - 40) + 'px';
+      heartContainer.style.top = (mouseY - 40) + 'px';
 
-      // 显示光影
-      mouseLight.classList.remove('hidden');
+      // 显示心形光标
+      heartContainer.classList.add('show');
 
-      // 清除之前的超时
-      clearTimeout(moveTimeout);
+      // 清除之前的隐藏计时器
+      clearTimeout(hideTimeout);
 
-      // 3秒无移动后隐藏
-      moveTimeout = setTimeout(() => {
-        mouseLight.classList.add('hidden');
-      }, 3000);
+      // 2秒无移动后隐藏
+      hideTimeout = setTimeout(() => {
+        heartContainer.classList.remove('show');
+      }, 2000);
     });
 
     // 鼠标离开窗口时隐藏
     document.addEventListener('mouseleave', () => {
-      mouseLight.classList.add('hidden');
+      heartContainer.classList.remove('show');
     });
 
-    // 鼠标进入窗口时显示
+    // 鼠标进入窗口时准备显示
     document.addEventListener('mouseenter', () => {
-      mouseLight.classList.remove('hidden');
+      clearTimeout(hideTimeout);
     });
 
     // 粒子生成系统
